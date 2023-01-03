@@ -4,6 +4,9 @@ let requestTransforms = [];
 let responseTransforms = [];
 const { environment: env, environmentLoaded: envLoaded } = useEnvironmentModel.data;
 const { timeout = 20000 } = env;
+
+console.log('sssss',env);
+
 requestTransforms.push((res) => {
     try {
         const { url, baseUrlType = '' } = res;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Space, Divider } from 'oss-ui';
+import { Button, Space, Divider } from 'fedx-ui';
 
 class Default extends React.Component {
     render() {

@@ -1,4 +1,4 @@
-import { EventClass } from 'oss-web-toolkits';
+import { EventClass } from 'oss-toolkits';
 
 class GlobalMessage extends EventClass {
     /**

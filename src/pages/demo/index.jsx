@@ -1,5 +1,5 @@
 import React from 'react';
-import { ProTable } from 'oss-ui';
+import { ProTable } from '@ant-design/pro-table';
 import useLoginInfoModel from '@Src/hox';
 import { testDemoApi } from '@Src/service/testDemoApi';
 const columns = [

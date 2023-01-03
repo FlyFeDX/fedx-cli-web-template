@@ -22,13 +22,17 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 
-const OssUiThemeWebpackPlugin = require('oss-ui-theme-webpack-plugin');
-const { getLessVars } = require('oss-ui-theme-webpack-plugin/oss-ui-theme-generator');
-
 const postcssNormalize = require('postcss-normalize');
-const { getThemeVariables } = require('oss-ui/lib/theme');
 
 const appPackageJson = require(paths.appPackageJson);
+
+const { theme } = require('antd');
+const { convertLegacyToken } = require('@ant-design/compatible/lib');
+
+const { defaultAlgorithm, defaultSeed } = theme;
+
+const mapToken = defaultAlgorithm(defaultSeed);
+const v4Token = convertLegacyToken(mapToken);
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
@@ -48,30 +52,6 @@ const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 const lessRegex = /\.(less)$/;
 const lessModuleRegex = /\.module\.(less)$/;
-
-const antdCustomTheme = require('./antd-theme');
-
-const defaultVars = getLessVars('./node_modules/oss-ui/lib/style/themes/default.less');
-const darkblueVars = getLessVars('./node_modules/oss-ui/lib/style/themes/darkblue.less');
-const lightVars = getLessVars('./node_modules/oss-ui/lib/style/themes/light.less');
-const darkVars = getLessVars('./node_modules/oss-ui/lib/style/themes/dark.less');
-
-const themeConfig = {
-    stylesDir: path.join(__dirname, '../src'),
-    ossUiDir: path.join(__dirname, '../node_modules/oss-ui'),
-    varFile: path.join(__dirname, '../node_modules/oss-ui/lib/style/themes/light.less'),
-    themeVariables: Array.from(
-        new Set([...Object.keys(defaultVars), ...Object.keys(darkblueVars), ...Object.keys(lightVars), ...Object.keys(darkVars)]),
-    ),
-    generateOnce: false, // generate color.less on each compilation
-    indexFileName: 'index.html',
-    // lessUrl: '/static/less/less.min.js',
-    publicPath: process.env.PUBLIC_URL,
-    // publicPath: (process.env.REACT_APP_ORIGIN || 'http://localhost') + ':' + process.env.REACT_APP_PORT + process.env.PUBLIC_URL,
-    publicTitle: process.env.REACT_APP_KEY,
-    loadLess: false,
-    // customColorRegexArray: [], // An array of regex codes to match your custom color variable values so that code can identify that it's a valid color. Make sure your regex does not adds false positives.
-};
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
@@ -143,7 +123,11 @@ module.exports = function (webpackEnv) {
                         sourceMap: true,
                         lessOptions: {
                             javascriptEnabled: true,
-                            modifyVars: getThemeVariables({ light: true, compact: true }),
+                            // modifyVars: getThemeVariables({ light: true, compact: true }),
+                            modifyVars: {
+                                ...v4Token,
+                                'ant-prefix': 'fedx-ui',
+                            },
                         },
                     },
                 },
@@ -277,9 +261,9 @@ module.exports = function (webpackEnv) {
                 chunks: 'all',
                 name: false,
                 cacheGroups: {
-                    'oss-ui': {
-                        name: 'chunk-oss-ui',
-                        test: /[\\/]node_modules[\\/](oss-ui|antd|oss-web-common|@ant-design)[\\/]/,
+                    'fedx-ui': {
+                        name: 'chunk-fedx-ui',
+                        test: /[\\/]node_modules[\\/](fedx-ui|antd|oss-web-common|@ant-design)[\\/]/,
                         priority: 20,
                         chunks: 'all',
                         enforce: true,
@@ -656,7 +640,6 @@ module.exports = function (webpackEnv) {
                     // The formatter is invoked directly in WebpackDevServerUtils during development
                     formatter: isEnvProduction ? typescriptFormatter : undefined,
                 }),
-            isEnvProduction && new OssUiThemeWebpackPlugin(themeConfig),
         ].filter(Boolean),
         // Some libraries import Node modules but don't use them in the browser.
         // Tell webpack to provide empty mocks for them so importing them works.

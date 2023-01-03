@@ -1,12 +1,12 @@
 import React, { Suspense } from 'react';
-import { _ } from 'oss-web-toolkits';
-import { Spin } from 'oss-ui';
+import { Spin } from 'fedx-ui';
+import omit from 'lodash/omit';
+import clone from 'lodash/clone';
 import { Switch, Route } from 'react-router';
-import KeepAlive from 'react-activation';
 export { Route, Switch };
 
 function containerComponent(props) {
-    return <props.component {..._.omit(props, 'component')} />;
+    return <props.component {...omit(props, 'component')} />;
 }
 
 export const mapRoutes = (routes, match, props) => (
@@ -27,13 +27,13 @@ export const mapRoutes = (routes, match, props) => (
     >
         {routes.map((route, index) => {
             if (match) {
-                route = _.clone(route);
+                route = clone(route);
                 route.path = match.url + route.path;
             }
             return (
                 <Route
                     key={index}
-                    {..._.omit(route, 'component', 'routes')}
+                    {...omit(route, 'component', 'routes')}
                     render={(props2) => {
                         const containerProps = {
                             path: route.path,
@@ -45,9 +45,7 @@ export const mapRoutes = (routes, match, props) => (
                             ...props2,
                         };
                         let componentResult = containerComponent(containerProps);
-                        if (route.keepAlive) {
-                            return <KeepAlive>{componentResult}</KeepAlive>;
-                        }
+
                         return componentResult;
                     }}
                 />

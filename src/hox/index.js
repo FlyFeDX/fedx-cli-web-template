@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import { createModel } from 'hox';
+import { theme } from 'fedx-ui';
 import { useEnvironment } from 'oss-web-common';
 import constants from '../common/constants';
 
+const { useToken } = theme;
+
 function useLoginInfo() {
+    const { token } = useToken();
     const [userName, setUserName] = useState('administrator');
     const [userId, setUserId] = useState('0');
     const [userInfo, setUserInfo] = useState('');
@@ -11,6 +15,9 @@ function useLoginInfo() {
     const [systemInfo, setSystemInfo] = useState({ appId: undefined, theme: 'light' });
     const [uuIdValue, setUuIdValue] = useState(null);
     const [srcString, setSrcString] = useState('');
+    const [messageTypes, setMessageTypes] = useState({});
+    const [colorPrimary, setColorPrimary] = useState(token.colorPrimary);
+
     return {
         userName,
         setUserName,
@@ -26,6 +33,10 @@ function useLoginInfo() {
         setUuIdValue,
         srcString,
         setSrcString,
+        messageTypes,
+        setMessageTypes,
+        colorPrimary,
+        setColorPrimary,
     };
 }
 

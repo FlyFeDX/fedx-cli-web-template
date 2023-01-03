@@ -11,7 +11,6 @@ const routes = [
         path: '/demo',
         component: 'demo',
         routes: [],
-        keepAlive:true
     },
 ];
 const allRouter = router.buildRoutes(routes);
